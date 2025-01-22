@@ -36,37 +36,37 @@ function Copy-WimFiles {
     )
 
     begin {
-        Write-Host "Starting Copy-WimFiles operation"
-        Write-Host "Source folder: $sourceFolder"
-        Write-Host "Destination folder: $destinationFolder"
-        Write-Host "Versions to copy: $($versions -join ', ')"
+        Write-Host "$(Get-Timestamp) - Starting Copy-WimFiles operation"
+        Write-Host "$(Get-Timestamp) - Source folder: $sourceFolder"
+        Write-Host "$(Get-Timestamp) - Destination folder: $destinationFolder"
+        Write-Host "$(Get-Timestamp) - Versions to copy: $($versions -join ', ')"
     }
 
     process {
         try {
             # Remove all files and folders in the destinationFolder
-            Write-Host "Removing all files in $destinationFolder"
+            Write-Host "$(Get-Timestamp) - Removing all files in $destinationFolder"
             Remove-Item -Path $destinationFolder\* -Recurse -Force
-            Write-Host "All files removed from $destinationFolder"
+            Write-Host "$(Get-Timestamp) - All files removed from $destinationFolder"
 
             # Copy the .wim files from the source folder to the destinationFolder
             foreach ($ver in $versions) {
-                Write-Host "Processing version: $ver"
-                Write-Host "Searching for files matching pattern *$ver*"
+                Write-Host "$(Get-Timestamp) - Processing version: $ver"
+                Write-Host "$(Get-Timestamp) - Searching for files matching pattern *$ver*"
                 
                 $files = Get-ChildItem -Path $sourceFolder -Recurse -File -Include "*$ver*"
                 
                 foreach ($file in $files) {
-                    Write-Host "Copying $($file.Name) to destination"
+                    Write-Host "$(Get-Timestamp) - Copying $($file.Name) to destination"
                     Copy-Item -Path $file.FullName -Destination $destinationFolder -Force
-                    Write-Host "$($file.Name) copied successfully"
+                    Write-Host "$(Get-Timestamp) - $($file.Name) copied successfully"
                 }
             }
             
-            Write-Host "All WIM files copied successfully"
+            Write-Host "$(Get-Timestamp) - All WIM files copied successfully"
         }
         catch {
-            Write-Error "Error occurred while copying WIM files: $($_.Exception.Message)"
+            Write-Error "$(Get-Timestamp) - Error occurred while copying WIM files: $($_.Exception.Message)"
         }
     }
 
