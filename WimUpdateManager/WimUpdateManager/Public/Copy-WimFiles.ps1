@@ -1,3 +1,24 @@
+<#
+.SYNOPSIS
+Copies specified WIM files from a source folder to a destination folder.
+
+.DESCRIPTION
+This function copies one or more WIM files from a source folder to a destination folder.
+It verifies the existence of source files and handles potential copy errors.
+
+.PARAMETER sourceFolder
+The path to the source folder containing WIM files.
+
+.PARAMETER destinationFolder
+The path to the destination folder where WIM files will be copied.
+
+.PARAMETER versions
+An array of strings representing the names of WIM files to copy.
+
+.EXAMPLE
+Copy-WimFiles -sourceFolder "C:\WIM\Source" -destinationFolder "D:\WIM\Dest" -versions @("win10.wim", "win11.wim")
+#>
+
 function Copy-WimFiles {
     [CmdletBinding()]
     param (
