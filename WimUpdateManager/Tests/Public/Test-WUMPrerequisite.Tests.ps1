@@ -15,7 +15,7 @@ Import-Module $psmPath -Force -NoClobber
 
 InModuleScope "WimUpdateManager" {
 
-    Describe "Test-Prerequisites" {
+    Describe "Test-WUMPrerequisite" {
         BeforeAll {
             Mock ([Security.Principal.WindowsPrincipal]).IsInRole { return $false }
             Mock Get-PSDrive { return @{ Free = 5GB } }
@@ -23,20 +23,20 @@ InModuleScope "WimUpdateManager" {
 
         Context "When running without admin rights" {
             It "Should return 'Admin Rights' as failed requirement" {
-                $result = Test-Prerequisites
+                $result = Test-WUMPrerequisite
                 $result | Should -Contain "Admin Rights"
             }
         }
 
         Context "When checking disk space" {
             It "Should return 'Disk Space' as failed requirement when space is insufficient" {
-                $result = Test-Prerequisites -WorkFolder "C:"
+                $result = Test-WUMPrerequisite -WorkFolder "C:"
                 $result | Should -Contain "Disk Space"
             }
 
             It "Should not return 'Disk Space' when space is sufficient" {
                 Mock Get-PSDrive { return @{ Free = 20GB } }
-                $result = Test-Prerequisites -WorkFolder "C:"
+                $result = Test-WUMPrerequisite -WorkFolder "C:"
                 $result | Should -Not -Contain "Disk Space"
             }
         }
@@ -48,12 +48,12 @@ InModuleScope "WimUpdateManager" {
             }
 
             It "Should return empty array when no WorkFolder is specified" {
-                $result = Test-Prerequisites
+                $result = Test-WUMPrerequisite
                 $result | Should -BeNullOrEmpty
             }
 
             It "Should return empty array when WorkFolder is specified and has sufficient space" {
-                $result = Test-Prerequisites -WorkFolder "C:"
+                $result = Test-WUMPrerequisite -WorkFolder "C:"
                 $result | Should -BeNullOrEmpty
             }
         }

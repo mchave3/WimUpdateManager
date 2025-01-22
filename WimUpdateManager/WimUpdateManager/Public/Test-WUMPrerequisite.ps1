@@ -1,3 +1,4 @@
+
 <#
 .SYNOPSIS
     Tests if all prerequisites are met for the WIM Update Manager.
@@ -20,7 +21,7 @@
     Date:    2025-01-22
     Version: 1.0
 #>
-function Test-Prerequisites {
+function Test-WUMPrerequisite {
     [CmdletBinding()]
     [OutputType([string[]])]
     param(
