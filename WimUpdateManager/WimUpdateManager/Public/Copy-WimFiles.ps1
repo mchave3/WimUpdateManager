@@ -1,75 +1,41 @@
-<#
-.SYNOPSIS
-    Copies WIM files from a source folder to a destination folder.
-.DESCRIPTION
-    This function copies WIM files from a source folder to a destination folder.
-    It first removes all files from the destination folder, then copies the specified WIM files.
-    The function supports copying specific Windows versions based on provided filters.
-.PARAMETER sourceFolder
-    The source folder containing the WIM files to copy.
-.PARAMETER destinationFolder
-    The destination folder where the WIM files will be copied.
-.PARAMETER versions
-    An array of version strings to filter which WIM files to copy.
-.EXAMPLE
-    Copy-WimFiles -sourceFolder "E:\Sources\Masters" -destinationFolder "E:\Work\WIM" -versions @("win10","win11")
-    Copies all WIM files containing "win10" or "win11" in their names from the source to destination folder.
-.NOTES
-    Author:  Mickaël CHAVE
-    Date:    2024-02-28
-    Version: 1.0
-#>
 function Copy-WimFiles {
     [CmdletBinding()]
-    param(
+    param (
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string]$sourceFolder,
-
+        
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string]$destinationFolder,
-
+        
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string[]]$versions
     )
 
     begin {
-        Write-Host "$(Get-Timestamp) - Starting Copy-WimFiles operation"
-        Write-Host "$(Get-Timestamp) - Source folder: $sourceFolder"
-        Write-Host "$(Get-Timestamp) - Destination folder: $destinationFolder"
-        Write-Host "$(Get-Timestamp) - Versions to copy: $($versions -join ', ')"
+        Write-Verbose "$(Get-Timestamp) - Starting WIM file copy process"
     }
 
     process {
-        try {
-            # Remove all files and folders in the destinationFolder
-            Write-Host "$(Get-Timestamp) - Removing all files in $destinationFolder"
-            Remove-Item -Path $destinationFolder\* -Recurse -Force
-            Write-Host "$(Get-Timestamp) - All files removed from $destinationFolder"
-
-            # Copy the .wim files from the source folder to the destinationFolder
-            foreach ($ver in $versions) {
-                Write-Host "$(Get-Timestamp) - Processing version: $ver"
-                Write-Host "$(Get-Timestamp) - Searching for files matching pattern *$ver*"
-                
-                $files = Get-ChildItem -Path $sourceFolder -Recurse -File -Include "*$ver*"
-                
-                foreach ($file in $files) {
-                    Write-Host "$(Get-Timestamp) - Copying $($file.Name) to destination"
-                    Copy-Item -Path $file.FullName -Destination $destinationFolder -Force
-                    Write-Host "$(Get-Timestamp) - $($file.Name) copied successfully"
+        foreach ($version in $versions) {
+            $sourcePath = Join-Path $sourceFolder $version
+            $destinationPath = Join-Path $destinationFolder $version
+            
+            if (Test-Path $sourcePath) {
+                try {
+                    Copy-Item -Path $sourcePath -Destination $destinationPath -Force
+                    Write-Verbose "$(Get-Timestamp) - Successfully copied $version"
+                }
+                catch {
+                    Write-Error "$(Get-Timestamp) - Failed to copy $version : $($_.Exception.Message)"
                 }
             }
-            
-            Write-Host "$(Get-Timestamp) - All WIM files copied successfully"
-        }
-        catch {
-            Write-Error "$(Get-Timestamp) - Error occurred while copying WIM files: $($_.Exception.Message)"
+            else {
+                Write-Warning "$(Get-Timestamp) - Source file not found: $sourcePath"
+            }
         }
     }
 
     end {
+        Write-Verbose "$(Get-Timestamp) - WIM file copy process completed"
     }
 }

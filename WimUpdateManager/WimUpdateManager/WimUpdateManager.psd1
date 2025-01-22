@@ -30,7 +30,7 @@ CompanyName = 'Unknown'
 Copyright = '(c) Mickaël CHAVE. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'Module PowerShell pour la gestion et la mise à jour des fichiers WIM Windows'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '3.0'
@@ -69,7 +69,11 @@ PowerShellVersion = '3.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = '*'
+FunctionsToExport = @(
+    'Copy-WimFiles',
+    'Add-Updates',
+    'Invoke-WimFileProcessing'
+)
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
@@ -129,4 +133,3 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
-
